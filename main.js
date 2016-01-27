@@ -112,6 +112,7 @@ player2.r = Math.sqrt(Math.pow(player1.width / 2, 2) + Math.pow(player1.height /
 function renderMenu() {
 	var fontSize = 20;
 
+	ctx.clearRect(0,0,canvasWidth,canvasHeight); // clear whole canvas
 	ctx.font = fontSize + "px Georgia";
 	ctx.beginPath();
 	ctx.lineWidth = "4";
@@ -131,6 +132,8 @@ function menuHandler() {
 	for (var i = 0; i < menuOptionPositions.length; i++) {
 		if (clickPos.x > menuOptionPositions[i].x && clickPos.x < menuOptionPositions[i].x + menuOptionAttribs.width) {
 			if (clickPos.y > menuOptionPositions[i].y && clickPos.y < menuOptionPositions[i].y + menuOptionAttribs.height) {
+				clickPos.x = 0;
+				clickPos.y = 0;
 				view = i + 1;
 				console.log("view = " + view);
 				break;
@@ -245,22 +248,22 @@ function physics2P() {
 	var collision = null;
 	for (var b = 0; b < bullets.length; b++) {
 		if (collision = colCheck(player1, bullets[b])) {
-			GAME_ON = false;
+			view = 0;
 			console.log("player1 collided w/ bullet");
 		} else if (collision = colCheck(player2, bullets[b])) {
-			GAME_ON = false;
+			view = 0;
 			console.log("player2 collided w/ bullet");
 		}
 	}
 	if (collision = colCheck(player1, attractor)) {
-		GAME_ON = false;
+		view = 0;
 		console.log("player1 collided w/ attractor");
 	} else if (collision = colCheck(player2, attractor)) {
-		GAME_ON = false;
+		view = 0;
 		console.log("player2 collided w/ attractor");
 	} else if (collision = colCheck(player1, player2)) {
 		// BLOW UP BOTH PLAYERS
-		GAME_ON = false;
+		view = 0;
 		console.log("player1 collided w/ player2");
 	}
 }
@@ -306,9 +309,25 @@ function update() {
 		break;
 	case 1:
 		multiplayer();
+		if (view == 0) {
+			player1.x = 0;
+			player1.y = 0;
+			player1.angle = 0;
+			player1.velX = 0;
+			player1.velY = 0;
+			player1.shot = false;
+
+			player2.x = canvasWidth;
+			player2.y = canvasHeight;
+			player2.angle = 0;
+			player2.velX = 0;
+			player2.velY = 0;
+			player2.shot = false;
+		}
 		break;
 	case 2:
-		options();
+		view = 0; // TODO: replace
+		//options();
 		break;
 	}
 
